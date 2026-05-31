@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raíssa Mori — Arquitetura e Interiores</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#b89a6a;--gold-light:#d4b896;--dark:#0e0e0e;--dark2:#181818;--cream:#f5f0e8;--cream2:#ede8df;--text:#2a2a2a;--text-light:#888;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Montserrat',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:28px 60px;transition:all 0.4s ease;}
+nav.scrolled{background:rgba(14,14,14,0.96);padding:18px 60px;backdrop-filter:blur(12px);}
+.logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;letter-spacing:5px;color:white;text-transform:uppercase;text-decoration:none;}
+.logo span{color:var(--gold);}
+.logo small{font-size:11px;letter-spacing:2px;color:rgba(255,255,255,0.55);font-weight:300;margin-left:4px;}
+.nav-links{display:flex;gap:32px;list-style:none;}
+.nav-links a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:10px;letter-spacing:2px;text-transform:uppercase;transition:color 0.3s;}
+.nav-links a:hover{color:var(--gold);}
+
+/* HERO */
+.hero{height:100vh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--dark);}
+.hero-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 2s ease;}
+.hero-slide.active{opacity:1;}
+.hero-slide::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.2) 0%,rgba(0,0,0,0.65) 100%);}
+.hero-content{position:relative;z-index:5;text-align:center;color:white;padding:0 20px;}
+.hero-tag{font-size:10px;letter-spacing:6px;text-transform:uppercase;color:var(--gold-light);margin-bottom:20px;animation:fadeUp 1s 0.4s both;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,9vw,115px);font-weight:300;line-height:0.88;letter-spacing:-1px;margin-bottom:28px;animation:fadeUp 1s 0.7s both;}
+.hero-title em{font-style:italic;color:var(--gold-light);}
+.hero-sub{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:52px;animation:fadeUp 1s 1s both;}
+.hero-cta{display:inline-block;padding:14px 44px;border:1px solid var(--gold);color:white;font-size:10px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;transition:all 0.3s;animation:fadeUp 1s 1.2s both;}
+.hero-cta:hover{background:var(--gold);color:var(--dark);}
+.hero-scroll{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);z-index:5;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.hero-scroll span{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.5);}
+.scroll-line{width:1px;height:48px;background:linear-gradient(to bottom,var(--gold),transparent);animation:scrollLine 2s infinite;}
+
+/* SECTIONS */
+section{padding:100px 60px;}
+.section-tag{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,58px);font-weight:300;line-height:1.1;margin-bottom:20px;}
+.section-title em{font-style:italic;color:var(--gold);}
+.divider{width:60px;height:1px;background:var(--gold);margin:24px 0;}
+
+/* PORTFOLIO */
+.portfolio{background:var(--cream);}
+.portfolio-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:56px;max-width:1400px;margin-left:auto;margin-right:auto;}
+.filter-tabs{display:flex;gap:4px;flex-wrap:wrap;}
+.tab{padding:11px 26px;background:transparent;border:1px solid rgba(0,0,0,0.18);cursor:pointer;font-family:'Montserrat',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-light);transition:all 0.3s;}
+.tab.active,.tab:hover{background:var(--dark);color:white;border-color:var(--dark);}
+
+.projects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;max-width:1400px;margin:0 auto;}
+.project-card{position:relative;overflow:hidden;cursor:pointer;aspect-ratio:4/3;background:#111;display:none;}
+.project-card.show{display:block;}
+.project-card.large{grid-column:span 2;aspect-ratio:16/9;}
+.project-card img{width:100%;height:100%;object-fit:cover;transition:transform 0.8s ease,filter 0.5s ease;filter:brightness(0.87);}
+.project-card:hover img{transform:scale(1.06);filter:brightness(0.5);}
+.project-info{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;background:linear-gradient(to top,rgba(0,0,0,0.78) 0%,transparent 55%);}
+.project-category{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-light);margin-bottom:6px;}
+.project-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:white;line-height:1.2;}
+.project-location{font-size:10px;color:rgba(255,255,255,0.5);margin-top:4px;}
+.project-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.4s;}
+.project-card:hover .project-overlay{opacity:1;}
+.view-btn{border:1px solid white;color:white;padding:10px 28px;font-size:10px;letter-spacing:2px;text-transform:uppercase;}
+
+/* QUEM SOMOS */
+.quem{background:var(--dark);color:white;}
+.quem-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1100px;margin:0 auto;}
+.quem .section-tag{color:var(--gold);}
+.quem .section-title{color:white;}
+.quem p{font-size:13px;line-height:2;color:rgba(255,255,255,0.65);margin-bottom:16px;}
+.quem-photos{display:grid;grid-template-columns:1fr;gap:12px;}
+.quem-photo{overflow:hidden;}
+.quem-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.6s ease;}
+.quem-photo:hover img{transform:scale(1.03);}
+.quem-photo.main{aspect-ratio:3/4;}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:40px;}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:var(--gold);line-height:1;}
+.stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:4px;}
+
+/* DEPOIMENTOS */
+.depoimentos{background:var(--cream2);}
+.dep-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1200px;margin:60px auto 0;}
+.dep-card{background:white;padding:36px 32px;position:relative;border-bottom:2px solid var(--gold);}
+.dep-stars{color:var(--gold);font-size:14px;letter-spacing:2px;margin-bottom:20px;}
+.dep-text{font-size:12px;line-height:1.9;color:var(--text);margin-bottom:24px;font-style:italic;}
+.dep-name{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-light);}
+.dep-quote{position:absolute;top:24px;right:28px;font-family:'Cormorant Garamond',serif;font-size:64px;color:rgba(184,154,106,0.12);line-height:1;}
+
+/* PROCESSO */
+.processo{background:var(--dark2);color:white;}
+.processo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:60px;background:rgba(255,255,255,0.07);}
+.processo-item{padding:48px 32px;background:var(--dark2);transition:background 0.3s;}
+.processo-item:hover{background:#222;}
+.processo-num{font-family:'Cormorant Garamond',serif;font-size:60px;font-weight:300;color:rgba(184,154,106,0.1);line-height:1;margin-bottom:20px;}
+.processo-title{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+.processo-text{font-size:12px;line-height:1.9;color:rgba(255,255,255,0.45);}
+
+/* CONTATO */
+.contato{background:var(--cream);}
+.contato-inner{max-width:700px;margin:0 auto;text-align:center;}
+.brasil-badge{display:inline-block;padding:8px 24px;border:1px solid var(--gold);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:32px;}
+.contato-links{display:flex;justify-content:center;gap:48px;margin-top:48px;flex-wrap:wrap;}
+.contato-link{display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:var(--text);transition:color 0.3s;}
+.contato-link:hover{color:var(--gold);}
+.contato-icon{font-size:20px;}
+.contato-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;}
+.contato-value{font-size:12px;color:var(--text-light);}
+
+/* FOOTER */
+footer{background:var(--dark);color:rgba(255,255,255,0.3);padding:36px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+footer p{font-size:10px;letter-spacing:1px;}
+.footer-location{font-size:10px;letter-spacing:1px;color:rgba(255,255,255,0.3);}
+
+/* GALLERY MODAL */
+.gallery-modal{position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,0.97);display:none;flex-direction:column;}
+.gallery-modal.open{display:flex;}
+.gm-header{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.gm-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:white;}
+.gm-subtitle{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-top:4px;}
+.gm-close{color:white;font-size:28px;cursor:pointer;background:none;border:none;font-weight:300;line-height:1;}
+.gm-grid{flex:1;overflow-y:auto;padding:24px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;align-content:start;}
+.gm-img{width:100%;aspect-ratio:4/3;object-fit:cover;cursor:pointer;transition:transform 0.3s,filter 0.3s;filter:brightness(0.85);}
+.gm-img:hover{transform:scale(1.02);filter:brightness(1);}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.97);display:none;align-items:center;justify-content:center;}
+.lightbox.open{display:flex;}
+.lb-img{max-width:90vw;max-height:85vh;object-fit:contain;}
+.lb-close{position:absolute;top:24px;right:32px;color:white;font-size:32px;cursor:pointer;background:none;border:none;}
+.lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);color:white;font-size:44px;cursor:pointer;background:none;border:none;padding:20px;opacity:0.6;transition:opacity 0.2s;}
+.lb-prev:hover,.lb-next:hover{opacity:1;}
+.lb-prev{left:8px;}
+.lb-next{right:8px;}
+.lb-counter{position:absolute;top:28px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.4);font-size:11px;letter-spacing:2px;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+@keyframes scrollLine{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform:scaleY(1);transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
+.fade-in{opacity:0;transform:translateY(40px);transition:opacity 0.8s ease,transform 0.8s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:1024px){.dep-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:900px){
+  nav{padding:20px 24px;}nav.scrolled{padding:14px 24px;}
+  .nav-links{display:none;}
+  section{padding:70px 24px;}
+  .quem-grid{grid-template-columns:1fr;gap:48px;}
+  .projects-grid{grid-template-columns:1fr 1fr;}
+  .project-card.large{grid-column:span 2;}
+  .processo-grid{grid-template-columns:1fr 1fr;}
+  .portfolio-header{flex-direction:column;gap:24px;align-items:flex-start;}
+  footer{flex-direction:column;text-align:center;}
+}
+@media(max-width:600px){
+  .projects-grid{grid-template-columns:1fr;}
+  .project-card.large{grid-column:span 1;}
+  .processo-grid{grid-template-columns:1fr;}
+  .dep-grid{grid-template-columns:1fr;}
+  .gm-grid{grid-template-columns:1fr;}
+  .quem-photo.main{aspect-ratio:4/3;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="logo">Raíssa <span>Mori</span> <small>— Arquitetura e Interiores</small></a>
+  <ul class="nav-links">
+    <li><a href="#portfolio">Portfólio</a></li>
+    <li><a href="#quem">Quem Somos</a></li>
+    <li><a href="#depoimentos">Depoimentos</a></li>
+    <li><a href="#processo">Processo</a></li>
+    <li><a href="#contato">Contato</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div id="heroSlides">
+    <div class="hero-slide active" style="background-image:url('imgs/mirador2.jpg')"></div>
+    <div class="hero-slide" style="background-image:url('imgs/rbderm1.jpg')"></div>
+    <div class="hero-slide" style="background-image:url('imgs/eclat2n.jpg')"></div>
+    <div class="hero-slide" style="background-image:url('imgs/cardio1n.jpg')"></div>
+    <div class="hero-slide" style="background-image:url('imgs/sala1n.jpg')"></div>
+    <div class="hero-slide" style="background-image:url('imgs/ambar1n.jpg')"></div>
+    <div class="hero-slide" style="background-image:url('imgs/raissa3.jpg')"></div>
+  </div>
+  <div class="hero-content">
+    <p class="hero-tag">Arquitetura · Interiores · Identidade</p>
+    <h1 class="hero-title">Espaços que<br><em>transcendem</em><br>o ordinário</h1>
+    <p class="hero-sub">Projetos para todo o Brasil</p>
+    <a href="#portfolio" class="hero-cta">Ver Portfólio</a>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="portfolio" id="portfolio">
+  <div class="portfolio-header fade-in">
+    <div>
+      <p class="section-tag">Portfólio</p>
+      <h2 class="section-title">Projetos <em>Selecionados</em></h2>
+    </div>
+    <div class="filter-tabs">
+      <button class="tab active" onclick="filterProjects('todos',this)">Todos</button>
+      <button class="tab" onclick="filterProjects('residencial',this)">Residências</button>
+      <button class="tab" onclick="filterProjects('clinicas',this)">Clínicas Médicas</button>
+      <button class="tab" onclick="filterProjects('interiores',this)">Interiores</button>
+    </div>
+  </div>
+
+  <div class="projects-grid" id="projectsGrid">
+
+    <!-- RESIDENCIAL -->
+    <div class="project-card large show" data-cat="residencial"
+      onclick="openGallery('Condomínio Mirador','Residence Resort · São João Batista do Glória',['imgs/mirador1.jpg','imgs/mirador2.jpg','imgs/mirador3.jpg','imgs/mirador4.jpg','imgs/mirador5.jpg','imgs/mirador6.jpg','imgs/mirador7.jpg'])">
+      <img src="imgs/mirador2.jpg" alt="Condomínio Mirador">
+      <div class="project-info"><p class="project-category">Residencial</p><h3 class="project-name">Condomínio Mirador</h3><p class="project-location">Residence Resort</p></div>
+      <div class="project-overlay"><div class="view-btn">Ver Projeto</div></div>
+    </div>
+
+    <div class="project-card show" data-cat="residencial"
+      onclick="openGallery('Casa Âmbar','Fachada Contemporânea',['imgs/ambar1n.jpg','imgs/ambar2n.jpg'])">
+      <img src="imgs/ambar1n.jpg" alt="Casa Âmbar">
+      <div class="project-info"><p class="project-category">Residencial</p><h3 class="project-name">Casa Âmbar</h3><p class="project-location">Fachada Contemporânea</p></div>
+      <div class="project-overlay"><div class="view-btn">Ver Projeto</div></div>
+    </div>
+
+    <div class="project-card show" data-cat="residencial"
+      onclick="openGallery('Chalé','Projeto Residencial',['imgs/chale1n.jpg','imgs/chale2n.jpg','imgs/chale3n.jpg'])">
+      <img src="imgs/chale3n.jpg" alt="Chalé">
+      <div class="project-info"><p class="project-category">Residencial</p><h3 class="project-name">Chalé</h3><p class="project-location">Projeto Residencial</p></div>
+      <div class="project-overlay"><div class="view-btn">Ver Projeto</div></div>
+    </div>
+
+    <div class="project-card show" data-cat="residencial"
+      onclick="openGallery('Casa Classic','Condomínio Vale Verde II · Passos',['imgs/classica1n.jpg','imgs/classica2n.jpg','imgs/classica3n.jpg','imgs/classica4n.jpg'])">
+      <img src="imgs/classica1n.jpg" alt="Casa Classic">
+      <div class="project-info"><p class="project-category">Residencial</p><h3 class="project-name">Casa Classic</h3><p class="project-location">Condomínio Vale Verde II · Passos</p></div>
+      <div class="project-overlay"><div class="view-btn">Ver Projeto</div></div>
+    </div>
+
+    <!-- CLÍNICAS -->
+    <div class="project-card large show" data-cat="clinicas"
+      onclick="openGallery('Raíssa Borém Dermatologia','Clínica Médica',['imgs/rbderm1.jpg','imgs/rbderm2.jpg','imgs/rbderm3.jpg','imgs/rbderm4.jpg','imgs/rbderm5.jpg','imgs/rbderm6.jpg'])">
+      <img src="imgs/rbderm3.jpg" alt="Raíssa Borém Dermatologia">
+      <div class="project-info"><p class="project-category">Clínica Médica</p><h3 class="project-name">Raíssa Borém Dermatologia</h3><p class="project-location">Clínica Médica</p></div>
+      <div class="project-overlay"><div class="view-btn">Ver Projeto</div></div>
+    </div>
+
+    <div class="project-card show" data-cat="clinicas"
+      onclick="openGallery('Instituto La Vitallis','Clínica Médica',['imgs/lavit2.jpg','imgs/lavit1.jpg','imgs/lavit3.jpg'])">
+      <img src="imgs/lavit2.jpg" alt="Instituto La Vitallis">
+      <div class="project-info"><p class="project-category">Clínica Médica</p><h3 class="project-name">Instituto La Vitallis</h3><p class="project-location">Clínica Médica</p></div>
+      <div class="project-overlay"><div class="view-btn">Ver Projeto</div></div>
+    </div>
+
+    <div class="project-card show" data-cat="clinicas"
+      onclick="openGallery('Consultório Cardiologista','Consultório Médico',['imgs/cardio1n.jpg','imgs/cardio2n.jpg','imgs/cardio3n.jpg'])">
+      <img src="imgs/cardio1n.jpg" alt="Consultório Cardiologista">
+      <div class="project-info"><p class="project-category">Clínica Médica</p><h3 class="project-name">Consultório Cardiologista</h3><p class="project-location">Consultório Médico</p></div>
+      <div class="project-overlay"><div class="view-btn">Ver Projeto</div></div>
+    </div>
+
+    <div class="project-card large show" data-cat="clinicas"
+      onclick="openGallery('Clínica Ellos','Clínica Médica',['imgs/ellos1n.jpg','imgs/ellos2n.jpg','imgs/ellos3n.jpg','imgs/ellos4n.jpg','imgs/ellos5n.jpg','imgs/ellos6n.jpg','imgs/ellos7n.jpg','imgs/ellos8n.jpg','imgs/ellos9n.jpg'])">
+      <img src="imgs/ellos3n.jpg" alt="Clínica Ellos">
+      <div class="project-info"><p class="project-category">Clínica Médica</p><h3 class="project-name">Clínica Ellos</h3><p class="project-location">Clínica Médica</p></div>
+      <div class="project-overlay"><div class="view-btn">Ver Projeto</div></div>
+    </div>
+
+    <div class="project-card show" data-cat="interiores"
+      onclick="openGallery('DC Advogados','Escritório · Manhattan',['imgs/dc13n.jpg','imgs/dc10n.jpg','imgs/dc1n.jpg','imgs/dc2n.jpg','imgs/dc3n.jpg','imgs/dc4n.jpg','imgs/dc5n.jpg','imgs/dc6n.jpg','imgs/dc7n.jpg','imgs/dc8n.jpg','imgs/dc9n.jpg','imgs/dc11n.jpg','imgs/dc12n.jpg','imgs/dc14n.jpg'])">
+      <img src="imgs/dc13n.jpg" alt="DC Advogados">
+      <div class="project-info"><p class="project-category">Interiores</p><h3 class="project-name">DC Advogados</h3><p class="project-location">Danziger &amp; Cardoso · Manhattan</p></div>
+      <div class="project-overlay"><div class="view-btn">Ver Projeto</div></div>
+    </div>
+
+    <!-- INTERIORES -->
+    <div class="project-card large show" data-cat="interiores"
+      onclick="openGallery('Casa Eclat','Interiores Residenciais',['imgs/eclat1n.jpg','imgs/eclat2n.jpg','imgs/eclat3n.jpg','imgs/eclat4n.jpg','imgs/eclat5n.jpg','imgs/eclat6n.jpg','imgs/eclat7n.jpg','imgs/eclat8n.jpg','imgs/eclat9n.jpg','imgs/eclat10n.jpg','imgs/eclat11n.jpg','imgs/eclat12n.jpg','imgs/eclat13n.jpg','imgs/eclat14n.jpg'])">
+      <img src="imgs/eclat6n.jpg" alt="Casa Eclat">
+      <div class="project-info"><p class="project-category">Interiores</p><h3 class="project-name">Casa Eclat</h3><p class="project-location">Interiores Residenciais</p></div>
+      <div class="project-overlay"><div class="view-btn">Ver Projeto</div></div>
+    </div>
+
+    <div class="project-card show" data-cat="interiores"
+      onclick="openGallery('Casa Alphes da Cunha','Condomínio · Cunha, SP',['imgs/cunha1n.jpg','imgs/cunha2n.jpg','imgs/cunha4n.jpg','imgs/cunha5n.jpg'])">
+      <img src="imgs/cunha5n.jpg" alt="Casa Alphes da Cunha">
+      <div class="project-info"><p class="project-category">Interiores</p><h3 class="project-name">Casa Alphes da Cunha</h3><p class="project-location">Condomínio · Cunha, SP</p></div>
+      <div class="project-overlay"><div class="view-btn">Ver Projeto</div></div>
+    </div>
+
+    <div class="project-card show" data-cat="interiores"
+      onclick="openGallery('Áreas Sociais','Sala de Estar · Jantar · Gourmet',['imgs/sala1n.jpg','imgs/sala2n.jpg','imgs/sala3n.jpg','imgs/int1n.jpg','imgs/int2n.jpg','imgs/int3n.jpg'])">
+      <img src="imgs/sala1n.jpg" alt="Áreas Sociais">
+      <div class="project-info"><p class="project-category">Interiores</p><h3 class="project-name">Áreas Sociais</h3><p class="project-location">Sala de Estar · Jantar · Gourmet</p></div>
+      <div class="project-overlay"><div class="view-btn">Ver Projeto</div></div>
+    </div>
+
+    <div class="project-card show" data-cat="interiores"
+      onclick="openGallery('Quarto Oli','Quarto Infantil Montessoriano',['imgs/oli1n.jpg','imgs/oli2n.jpg','imgs/oli3n.jpg','imgs/oli4n.jpg'])">
+      <img src="imgs/oli3n.jpg" alt="Quarto Oli">
+      <div class="project-info"><p class="project-category">Interiores</p><h3 class="project-name">Quarto Oli</h3><p class="project-location">Quarto Infantil Montessoriano</p></div>
+      <div class="project-overlay"><div class="view-btn">Ver Projeto</div></div>
+    </div>
+
+    <div class="project-card show" data-cat="interiores"
+      onclick="openGallery('Cozinhas','Projetos de Cozinha',['imgs/coz1n.jpg','imgs/coz2n.jpg','imgs/coz3n.jpg','imgs/coz4n.jpg'])">
+      <img src="imgs/coz2n.jpg" alt="Cozinhas">
+      <div class="project-info"><p class="project-category">Interiores</p><h3 class="project-name">Cozinhas</h3><p class="project-location">Projetos de Cozinha</p></div>
+      <div class="project-overlay"><div class="view-btn">Ver Projeto</div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- QUEM SOMOS -->
+<section class="quem" id="quem">
+  <div class="quem-grid">
+    <div>
+      <p class="section-tag fade-in">Quem Somos</p>
+      <h2 class="section-title fade-in">Raíssa <em>Mori</em></h2>
+      <div class="divider fade-in"></div>
+      <p class="fade-in">Sou arquiteta especializada em projetos residenciais de alto padrão e reformas de clínicas médicas, com projetos realizados em todo o Brasil.</p>
+      <p class="fade-in">Acredito que cada espaço tem uma história a contar. Com escuta atenta e olhar refinado, desenvolvo projetos que equilibram sofisticação, funcionalidade e a identidade única de cada cliente.</p>
+      <p class="fade-in">Do primeiro encontro à entrega final, estou presente em cada detalhe — porque para mim, arquitetura é transformação de vida.</p>
+      <div class="stats fade-in">
+        <div><div class="stat-num">10+</div><div class="stat-label">Anos de experiência</div></div>
+        <div><div class="stat-num">210+</div><div class="stat-label">Projetos entregues</div></div>
+        <div><div class="stat-num">Brasil</div><div class="stat-label">Todo o território</div></div>
+        <div><div class="stat-num">100%</div><div class="stat-label">Dedicação</div></div>
+      </div>
+    </div>
+    <div class="quem-photos fade-in">
+      <div class="quem-photo main">
+        <img src="imgs/raissa1.jpg" alt="Raíssa Mori">
+      </div>
+      <div class="quem-photo main">
+        <img src="imgs/raissa3.jpg" alt="Raíssa Mori">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section class="depoimentos" id="depoimentos">
+  <div style="max-width:1200px;margin:0 auto;">
+    <p class="section-tag fade-in" style="text-align:center;">Depoimentos</p>
+    <h2 class="section-title fade-in" style="text-align:center;">O que dizem os <em>clientes</em></h2>
+    <div class="dep-grid">
+
+      <div class="dep-card fade-in">
+        <div class="dep-quote">"</div>
+        <div class="dep-stars">★★★★★</div>
+        <p class="dep-text">Profissional impecável! Desde o primeiro encontro fomos muito bem atendidos, com atenção, cuidado e explicações claras sobre o seu trabalho irretocável. A Raíssa é extremamente competente, delicada e transmite muita confiança. Recomendamos de olhos fechados.</p>
+        <div class="dep-name">Valéria Viana</div>
+      </div>
+
+      <div class="dep-card fade-in">
+        <div class="dep-quote">"</div>
+        <div class="dep-stars">★★★★★</div>
+        <p class="dep-text">Excelente profissional! Nos ajudou a transformar nosso sonho em realidade! Desde o início, a Raíssa teve muita atenção para entender exatamente o que queríamos: uma casa com cara de casa, clássica, aconchegante e também sofisticada!</p>
+        <div class="dep-name">Dra. Vanessa Souza</div>
+      </div>
+
+      <div class="dep-card fade-in">
+        <div class="dep-quote">"</div>
+        <div class="dep-stars">★★★★★</div>
+        <p class="dep-text">Excelente arquiteta, querida e competente. Meu projeto ficou lindo graças a ela! Profissional atenciosa e prestativa.</p>
+        <div class="dep-name">Karina K. Teixeira Alberghini</div>
+      </div>
+
+      <div class="dep-card fade-in">
+        <div class="dep-quote">"</div>
+        <div class="dep-stars">★★★★★</div>
+        <p class="dep-text">Excelente profissional, qualidade no alto padrão, valorizou meu imóvel com projeto que foi feito.</p>
+        <div class="dep-name">Wallace Andrade</div>
+      </div>
+
+      <div class="dep-card fade-in" style="grid-column:span 2;">
+        <div class="dep-quote">"</div>
+        <div class="dep-stars">★★★★★</div>
+        <p class="dep-text">Quero deixar aqui meu sincero agradecimento à arquiteta Raíssa, que transformou completamente o meu consultório com maestria, competência e uma agilidade impressionante! Em apenas 13 dias, ela conduziu uma reforma que trouxe um novo ar, mais moderno, acolhedor e funcional. A Raíssa conseguiu materializar tudo aquilo que eu imaginava — e até o que eu nem sabia que precisava! Seu comprometimento, bom gosto e profissionalismo tornaram esse projeto possível em tempo recorde, com um resultado que superou todas as expectativas.</p>
+        <div class="dep-name">Dra. Bárbara Paiva</div>
+      </div>
+
+      <div class="dep-card fade-in">
+        <div class="dep-quote">"</div>
+        <div class="dep-stars">★★★★★</div>
+        <p class="dep-text">Nota mil!!! Ela é perfeita. Fez a reforma da minha clínica em menos de um mês e estava tudo igualzinho no projeto! Perfeito em cada detalhe. Além de ajudar com tudo, indicou bons profissionais e entregou além do que eu esperava! Indico de olhos fechados!</p>
+        <div class="dep-name">Juliana Bernardes</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROCESSO -->
+<section class="processo" id="processo">
+  <div style="max-width:1200px;margin:0 auto;">
+    <p class="section-tag fade-in">Metodologia</p>
+    <h2 class="section-title fade-in" style="color:white;">O <em>Processo</em></h2>
+    <div class="processo-grid fade-in">
+      <div class="processo-item">
+        <div class="processo-num">01</div>
+        <div class="processo-title">Imersão</div>
+        <p class="processo-text">Escuta profunda das necessidades, referências e sonhos do cliente. Entendemos o modo de vida para criar algo verdadeiramente seu.</p>
+      </div>
+      <div class="processo-item">
+        <div class="processo-num">02</div>
+        <div class="processo-title">Conceito</div>
+        <p class="processo-text">Desenvolvimento da identidade do projeto — partido arquitetônico, paleta, materiais e atmosfera. A visão toma forma.</p>
+      </div>
+      <div class="processo-item">
+        <div class="processo-num">03</div>
+        <div class="processo-title">Projeto</div>
+        <p class="processo-text">Elaboração técnica completa com plantas, elevações, detalhamentos e especificações. Precisão em cada detalhe.</p>
+      </div>
+      <div class="processo-item">
+        <div class="processo-num">04</div>
+        <div class="processo-title">Entrega</div>
+        <p class="processo-text">Acompanhamento da execução e entrega do espaço finalizado. Do conceito ao concreto, com excelência em cada etapa.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTATO -->
+<section class="contato" id="contato">
+  <div class="contato-inner fade-in">
+    <p class="section-tag" style="text-align:center;">Contato</p>
+    <h2 class="section-title" style="text-align:center;">Vamos <em>conversar</em></h2>
+    <div class="divider" style="margin:24px auto;"></div>
+    <a href="https://wa.me/5535998858448?text=Olá%20Raíssa!%20Vi%20seu%20trabalho%20e%20gostaria%20de%20solicitar%20um%20orçamento." target="_blank" class="brasil-badge" style="text-decoration:none;cursor:pointer;">✈ Atendemos todo o Brasil — Solicite seu orçamento</a>
+    <p style="font-size:13px;line-height:1.9;color:var(--text-light);">
+      Pronta para transformar seu espaço em algo extraordinário, independente de onde você estiver. Entre em contato e vamos começar.
+    </p>
+    <div class="contato-links">
+      <a href="https://instagram.com/arquitetaraissamori" target="_blank" class="contato-link">
+        <span class="contato-icon">📷</span>
+        <span class="contato-label">Instagram</span>
+        <span class="contato-value">@arquitetaraissamori</span>
+      </a>
+      <a href="https://wa.me/5535998858448?text=Olá%20Raíssa!%20Gostaria%20de%20solicitar%20um%20orçamento." target="_blank" class="contato-link">
+        <span class="contato-icon">💬</span>
+        <span class="contato-label">WhatsApp</span>
+        <span class="contato-value">(35) 99885-8448</span>
+      </a>
+      <a href="mailto:diretoria@raissamoriarquitetura.com" class="contato-link">
+        <span class="contato-icon">✉️</span>
+        <span class="contato-label">E-mail</span>
+        <span class="contato-value">diretoria@raissamoriarquitetura.com</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="logo">Raíssa <span>Mori</span></a>
+  <p>© 2025 Raíssa Mori Arquitetura · Todos os direitos reservados</p>
+  <p class="footer-location">Brasil</p>
+</footer>
+
+<!-- GALLERY MODAL -->
+<div class="gallery-modal" id="galleryModal">
+  <div class="gm-header">
+    <div>
+      <div class="gm-title" id="gmTitle"></div>
+      <div class="gm-subtitle" id="gmSub"></div>
+    </div>
+    <button class="gm-close" onclick="closeGallery()">✕</button>
+  </div>
+  <div class="gm-grid" id="gmGrid"></div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <button class="lb-prev" onclick="lbNav(-1)">‹</button>
+  <img class="lb-img" id="lbImg" src="" alt="">
+  <button class="lb-next" onclick="lbNav(1)">›</button>
+  <div class="lb-counter" id="lbCounter"></div>
+</div>
+
+<script>
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>60);
+});
+
+const slides=document.querySelectorAll('.hero-slide');
+let cur=0;
+setInterval(()=>{
+  slides[cur].classList.remove('active');
+  cur=(cur+1)%slides.length;
+  slides[cur].classList.add('active');
+},5000);
+
+function filterProjects(cat,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.project-card[data-cat]').forEach(card=>{
+    card.classList.toggle('show',cat==='todos'||card.dataset.cat===cat);
+  });
+}
+
+let lbImages=[],lbIndex=0;
+
+function openGallery(title,sub,images){
+  document.getElementById('gmTitle').textContent=title;
+  document.getElementById('gmSub').textContent=sub;
+  lbImages=images;
+  const grid=document.getElementById('gmGrid');
+  grid.innerHTML='';
+  images.forEach((src,i)=>{
+    const img=document.createElement('img');
+    img.className='gm-img';img.src=src;
+    img.onclick=()=>openLightbox(i);
+    grid.appendChild(img);
+  });
+  document.getElementById('galleryModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeGallery(){
+  document.getElementById('galleryModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function openLightbox(i){
+  lbIndex=i;
+  document.getElementById('lbImg').src=lbImages[i];
+  document.getElementById('lbCounter').textContent=(i+1)+' / '+lbImages.length;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+}
+function lbNav(dir){
+  lbIndex=(lbIndex+dir+lbImages.length)%lbImages.length;
+  document.getElementById('lbImg').src=lbImages[lbIndex];
+  document.getElementById('lbCounter').textContent=(lbIndex+1)+' / '+lbImages.length;
+}
+document.getElementById('lightbox').addEventListener('click',e=>{
+  if(e.target===document.getElementById('lightbox'))closeLightbox();
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeLightbox();closeGallery();}
+  if(e.key==='ArrowRight')lbNav(1);
+  if(e.key==='ArrowLeft')lbNav(-1);
+});
+
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:0.1});
+document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
